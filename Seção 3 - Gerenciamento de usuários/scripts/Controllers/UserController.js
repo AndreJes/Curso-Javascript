@@ -11,18 +11,61 @@ class UserController {
         this.formEL.addEventListener("submit", (event) => {
             event.preventDefault();
             let newUser = this.getUserFromForm();
-            console.log(newUser);
-            this.addNewLineToTable(newUser);
+            
+            this.getPhoto().then(
+                (content) => {
+                    newUser.photo = content;
+    
+                    this.addNewLineToTable(newUser);
+                },
+
+                (e) => {
+                    console.error(e);
+                }
+            );
         });
     }
     //Closing onSubmit
+
+    getPhoto(){
+        
+        return new Promise((resolve, reject) =>{
+
+            let fileReader = new FileReader();
+
+            let elements = [...this.formEL.elements].filter(item => {
+                if(item.name === "photo"){
+                    return item;
+                }
+            });
+
+            let file = elements[0].files[0];
+            console.log(file);
+
+            fileReader.onload = () =>{
+                resolve(fileReader.result);
+            }
+
+            fileReader.onerror = (e) => {
+                reject(e);
+            }
+
+            if(file){
+                fileReader.readAsDataURL(file);
+            }
+            else{
+                resolve("dist/img/boxed-bg.jpg")
+            }
+        });
+    }
+    //Closing getPhoto
 
     addNewLineToTable(userData){
 
         let newLine = document.createElement("tr");
     
         newLine.innerHTML = `
-            <td><img src="dist/img/user1-128x128.jpg" alt="User Image" class="img-circle img-sm"></img></td>
+            <td><img src="${userData.photo}" alt="User Image" class="img-circle img-sm"></img></td>
             <td>${userData.name}</td>
             <td>${userData.email}</td>
             <td>${userData.admin ? "Sim" : "Não"}</td>
@@ -46,6 +89,9 @@ class UserController {
                 if(field.isChecked){
                     user[field.name] = field.value;
                 }
+            }
+            else if(field.name == "admin"){
+                user[field.name] = field.checked;
             }
             else{
                 user[field.name] = field.value;
