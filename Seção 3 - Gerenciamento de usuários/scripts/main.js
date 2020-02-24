@@ -1,1 +1,1 @@
-var userController = new UserController("form-user-create", "user-list")
+var userController = new UserController("form-user-create", "form-user-update", "user-list")

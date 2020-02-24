@@ -10,7 +10,7 @@ class User {
         this._password = password;
         this._photo = photo;
         this._admin = admin;
-        this._createdDate = new Date();
+        this._createdDate = "";
 
     }
 
@@ -50,8 +50,11 @@ class User {
         this._photo = value;
     }
 
-    getCreatedDate(locale){
-        return this._createdDate.toLocaleDateString(locale);
+    loadFromJSON(json){
+        
+        for(let name in json){
+            this[name] = json[name];
+        }
     }
 
 }
